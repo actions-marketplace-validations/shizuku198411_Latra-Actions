@@ -1,0 +1,31 @@
+name: Latra Workshop Scan
+description: Scan Canonical Workshop SDKs with Latra and optionally fail on SDK risk.
+inputs:
+  project:
+    description: Path to the Workshop project, relative to the workspace.
+    required: false
+    default: '.'
+  fail-on:
+    description: Fail if any SDK matches this risk condition after suppression.
+    required: false
+    default: ''
+runs:
+  using: composite
+  steps:
+    - name: Install Latra from Snap
+      shell: bash
+      run: sudo snap install latra --channel=latest/stable
+    - name: Show Latra version
+      shell: bash
+      run: snap run latra version
+    - name: Scan Workshop project
+      shell: bash
+      env:
+        LATRA_PROJECT: ${{ inputs.project }}
+        LATRA_FAIL_ON: ${{ inputs.fail-on }}
+      run: |
+        args=(scan --project "$LATRA_PROJECT")
+        if [[ -n "$LATRA_FAIL_ON" ]]; then
+          args+=(--fail-on "$LATRA_FAIL_ON")
+        fi
+        exec snap run latra "${args[@]}"

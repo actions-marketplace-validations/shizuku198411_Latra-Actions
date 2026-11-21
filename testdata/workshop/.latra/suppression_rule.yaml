@@ -1,0 +1,7 @@
+version: 1
+rules:
+  - id: expected-demo-service
+    sdk: demo
+    risk: risk.persistence-write
+    hook: setup-project
+    reason: The test fixture intentionally enables demo.service.
